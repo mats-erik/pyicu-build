@@ -1,16 +1,25 @@
 diff --git a/setup.py b/setup.py
-index 164324e..ee41698 100644
+index 4b2385f..ed5ab0b 100644
 --- a/setup.py
 +++ b/setup.py
 @@ -116,7 +116,7 @@ INCLUDES = {
      'cygwin': [],
  }
-
+ 
 -if sys.platform == 'win32' and sys.version_info < (3,9):
 +if sys.platform == 'win32' and sys.version_info < (3,7):
      ver_flag = '/D%s=\\"%s\\"'
  else:
      ver_flag = '-D%s="%s"'
+@@ -138,7 +138,7 @@ CFLAGS = {
+     'darwin': ['-std=c++11'],
+     'linux': ['-std=c++11'],
+     'freebsd': ['-std=c++11'],
+-    'win32': ['/Zc:wchar_t', '/EHsc'],
++    'win32': ['/Zc:wchar_t', '/EHsc', '/std:c++17'],
+     'sunos5': ['-std=c++11'],
+     'cygwin': ['-D_GNU_SOURCE=1', '-std=c++11'],
+ }
 @@ -166,7 +166,7 @@ LIBRARIES = {
      'darwin': [],
      'linux': [],

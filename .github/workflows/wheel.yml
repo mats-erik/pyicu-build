@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
 
 env:
-  PYICU_TAG: v2.11
-  ICU_VERSION: 73
-  ICU_RELEASE: 73-1/icu4c-73_1
+  PYICU_TAG: v2.13
+  ICU_VERSION: 75
+  ICU_RELEASE: 75-1/icu4c-75_1
   CIBW_TEST_REQUIRES: pytest six
   CIBW_TEST_COMMAND: pytest {project}/test
   CIBW_SKIP: "pp* cp36*"
@@ -20,18 +20,19 @@ jobs:
         os: [windows-2019]
     env:
       ICU_ARCH: 64
-      ICU_PLAT: Win64-MSVC2019
+      ICU_PLAT: Win64-MSVC2022
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: download.cmd
         shell: cmd
-      - uses: pypa/cibuildwheel@v2.16.2
+      - uses: pypa/cibuildwheel@v2.17.0
         env:
           CIBW_ARCHS_WINDOWS: AMD64
           CIBW_ENVIRONMENT_WINDOWS: INCLUDE="include;$INCLUDE" LIB="lib$ICU_ARCH;$LIB"
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           path: ./wheelhouse/*.whl
+          name: wheels-win-amd64
   build_arm64:
     name: Build ARM64 wheels
     runs-on: ${{ matrix.os }}
@@ -40,35 +41,38 @@ jobs:
         os: [windows-2019]
     env:
       ICU_ARCH: ARM64
-      ICU_PLAT: WinARM64-MSVC2019
+      ICU_PLAT: WinARM64-MSVC2022
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: download.cmd
         shell: cmd
-      - uses: pypa/cibuildwheel@v2.16.2
+      - uses: pypa/cibuildwheel@v2.17.0
         env:
           CIBW_SKIP: "pp* cp36* cp37* cp38* cp39* cp310*"
           CIBW_ARCHS_WINDOWS: ARM64
           CIBW_ENVIRONMENT_WINDOWS: INCLUDE="include;$INCLUDE" LIB="lib$ICU_ARCH;$LIB"
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           path: ./wheelhouse/*.whl
-  build_x86:
-    name: Build x86 wheels
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [windows-2019]
-    env:
-      ICU_PLAT: Win32-MSVC2019
-    steps:
-      - uses: actions/checkout@v3
-      - run: download.cmd
-        shell: cmd
-      - uses: pypa/cibuildwheel@v2.16.2
-        env:
-          CIBW_ARCHS_WINDOWS: x86
-          CIBW_ENVIRONMENT_WINDOWS: INCLUDE="include;$INCLUDE" LIB="lib$ICU_ARCH;$LIB"
-      - uses: actions/upload-artifact@v3
-        with:
-          path: ./wheelhouse/*.whl
+          name: wheels-win-arm64
+#  icu4c-Win32 binaries no longer published
+#  build_x86:
+#    name: Build x86 wheels
+#    runs-on: ${{ matrix.os }}
+#    strategy:
+#      matrix:
+#        os: [windows-2019]
+#    env:
+#      ICU_PLAT: Win32-MSVC2022
+#    steps:
+#      - uses: actions/checkout@v4
+#      - run: download.cmd
+#        shell: cmd
+#      - uses: pypa/cibuildwheel@v2.17.0
+#        env:
+#          CIBW_ARCHS_WINDOWS: x86
+#          CIBW_ENVIRONMENT_WINDOWS: INCLUDE="include;$INCLUDE" LIB="lib$ICU_ARCH;$LIB"
+#      - uses: actions/upload-artifact@v4
+#        with:
+#          path: ./wheelhouse/*.whl
+#          name: wheels-win32
